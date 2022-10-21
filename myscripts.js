@@ -1,8 +1,11 @@
-let searchInput = document.getElementById("searchInput");
-let searchResults = document.getElementById("searchResults");
-let spinnerEl=document.getElementById("spinner");
-function createAndAppendSearchResult(result){
-    let { link, title, description } = result;
+let searchInputEl = document.getElementById("searchInput");
+
+let searchResultsEl = document.getElementById("searchResults");
+
+let spinnerEl = document.getElementById("spinner");
+
+function createAndAppendSearchResult(result) {
+  let { link, title, description } = result;
 
   let resultItemEl = document.createElement("div");
   resultItemEl.classList.add("result-item");
@@ -32,9 +35,8 @@ function createAndAppendSearchResult(result){
   descriptionEl.textContent = description;
   resultItemEl.appendChild(descriptionEl);
 
-  searchResults.appendChild(resultItemEl);
+  searchResultsEl.appendChild(resultItemEl);
 }
-    
 
 function displayResults(searchResults) {
   spinnerEl.classList.add("d-none");
@@ -42,24 +44,29 @@ function displayResults(searchResults) {
   for (let result of searchResults) {
     createAndAppendSearchResult(result);
   }
-}  
-searchInput.addEventListener("keydown", function(event) {
-    if (event.key === "Enter") {
-        spinnerEl.classList.remove("d-none");
-        searchResults.textContent = "";
-        let url = "https://apis.ccbp.in/wiki-search?search=" + searchInput.value;
-        //console.log(url);
-        let options = {
-            method: "GET"
-        };
-        fetch(url, options)
-        .then(function(response) {
-            return response.json();
-        })
-        .then(function(jsonData) {
-            let {search_results} = jsonData;
-            
-            displayResults(search_results);
-            });
-    }
-});
+}
+
+function searchWikipedia(event) {
+  if (event.key === "Enter") {
+
+    spinnerEl.classList.remove("d-none");
+    searchResultsEl.textContent = "";
+
+    let searchInput = searchInputEl.value;
+    let url = "https://apis.ccbp.in/wiki-search?search=" + searchInput;
+    let options = {
+      method: "GET"
+    };
+
+    fetch(url, options)
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (jsonData) {
+        let { search_results } = jsonData;
+        displayResults(search_results);
+      });
+  }
+}
+
+searchInputEl.addEventListener("keydown", searchWikipedia);
